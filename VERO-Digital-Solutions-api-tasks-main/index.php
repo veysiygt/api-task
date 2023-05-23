@@ -37,6 +37,15 @@ class Api
 				'method' => 'post',
 				'bodyType' => 'ConstructionStagesCreate'
 			],
+			'patch constructionStages/(:num)' => [
+				'class' => 'ConstructionStages',
+				'method' => 'patch',
+				'bodyType' => 'ConstructionStagesCreate'
+			],
+			'delete constructionStages/(:num)' => [
+				'class' => 'ConstructionStages',
+				'method' => 'delete'
+			]
 		];
 
 		$response = [
@@ -54,6 +63,14 @@ class Api
 						$data = json_decode(file_get_contents('php://input'));
 						$params = [new $target['bodyType']($data)];
 					}
+					if ($httpVerb === 'patch') {
+						$data = json_decode(file_get_contents('php://input'));
+						$params = [$matches[0], new $target['bodyType']($data)];
+					}
+					if ($httpVerb === 'delete') {
+						$params = [$matches[0]];
+					}
+
 					$params = array_merge($params, $matches);
 					$response = call_user_func_array([new $target['class'], $target['method']], $params);
 					break;
