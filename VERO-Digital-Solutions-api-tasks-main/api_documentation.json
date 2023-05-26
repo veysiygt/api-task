@@ -1,0 +1,271 @@
+{
+    "info": {
+      "_postman_id": "af8f3a0a-5d8d-47dd-85f3-da5416291715",
+      "name": "Api-Task",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "_exporter_id": "25057623"
+    },
+    "item": [
+      {
+        "name": "ConstructionStagesCreate",
+        "request": {
+          "method": "PATCH",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n\"name\": \"TEST\",\r\n\"status\": \"PLANNED\"\r\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8080/constructionStages/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "constructionStages",
+              "1"
+            ]
+          },
+          "description": "This endpoint is used to update a specific construction stage. The unique identifier of the construction stage is provided as the \"id\" parameter in the request."
+        },
+        "response": [
+          {
+            "name": "Response 200",
+            "originalRequest": {
+              "method": "PATCH",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\r\n\"name\": \"TEST\",\r\n\"status\": \"PLANNED\"\r\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8080/constructionStages/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "constructionStages",
+                  "1"
+                ]
+              },
+              "description": "This endpoint is used to update a specific construction stage. The unique identifier of the construction stage is provided as the \"id\" parameter in the request."
+            },
+            "status": "OK",
+            "code": 200,
+            "header": [],
+            "cookie": [],
+            "body": "{\"success\": \"Construction stage updated successfully.\" }",
+            "responseTime": "35ms"
+          }
+        ]
+      },
+      {
+        "name": "ConstructionStagesDelete",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:8080/constructionStages/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "constructionStages",
+              "1"
+            ]
+          },
+          "description": "This endpoint is used to delete a specific construction stage. The \"id\" parameter in the request represents the unique identifier of the construction stage to be deleted."
+        },
+        "response": [
+          {
+            "name": "Response 200",
+            "originalRequest": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "http://localhost:8080/constructionStages/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "constructionStages",
+                  "1"
+                ]
+              },
+              "description": "This endpoint is used to delete a specific construction stage. The \"id\" parameter in the request represents the unique identifier of the construction stage to be deleted."
+            },
+            "status": "OK",
+            "code": 200,
+            "header": [],
+            "cookie": [],
+            "body": "{\"success\": \"Construction stage deleted successfully.\" }",
+            "responseTime": "21ms"
+          }
+        ]
+      },
+      {
+        "name": "constructionStagesGet",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/constructionStages/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "constructionStages",
+              "1"
+            ]
+          },
+          "description": "This endpoint is used to retrieve the details of a specific construction stage. The unique identifier of the construction stage is provided as the \"id\" parameter in the request."
+        },
+        "response": [
+          {
+            "name": "Response 200",
+            "originalRequest": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8080/constructionStages/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "constructionStages",
+                  "1"
+                ]
+              },
+              "description": "This endpoint is used to retrieve the details of a specific construction stage. The unique identifier of the construction stage is provided as the \"id\" parameter in the request."
+            },
+            "status": "OK",
+            "code": 200,
+            "header": [],
+            "cookie": [],
+            "body": "[\r\n  {\r\n    \"id\": \"1\",\r\n    \"name\": \"TEST\",\r\n    \"startDate\": \"2020-12-31T00:00:00Z\",\r\n    \"endDate\": null,\r\n    \"duration\": null,\r\n    \"durationUnit\": \"DAYS\",\r\n    \"color\": null,\r\n    \"externalId\": null,\r\n    \"status\": \"PLANNED\"\r\n  }\r\n]",
+            "responseTime": "47ms"
+          }
+        ]
+      },
+      {
+        "name": "ConstructionStagesCreate",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n\"name\": \"TEST\",\r\n\"startDate\": \"2021-10-31T00:00:00Z\",\r\n\"endDate\": \"2023-12-31T00:00:00Z\",\r\n\"durationUnit\": \"HOURS\",\r\n\"color\": \"#FF0000\",\r\n\"externalId\": \"externalTest\",\r\n\"status\": \"PLANNED\"\r\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8080/constructionStages/",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "constructionStages"
+            ]
+          },
+          "description": "This endpoint is used to create a new construction stage with the provided details."
+        },
+        "response": [
+          {
+            "name": "Response 200",
+            "originalRequest": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\r\n\"name\": \"TEST\",\r\n\"startDate\": \"2021-10-31T00:00:00Z\",\r\n\"endDate\": \"2023-12-31T00:00:00Z\",\r\n\"durationUnit\": \"HOURS\",\r\n\"color\": \"#FF0000\",\r\n\"externalId\": \"externalTest\",\r\n\"status\": \"PLANNED\"\r\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8080/constructionStages/",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "constructionStages"
+                ]
+              },
+              "description": "This endpoint is used to create a new construction stage with the provided details."
+            },
+            "status": "OK",
+            "code": 200,
+            "header": [],
+            "cookie": [],
+            "body": "[\r\n  {\r\n    \"id\": \"186\",\r\n    \"name\": \"TEST\",\r\n    \"startDate\": \"2021-10-31T00:00:00Z\",\r\n    \"endDate\": \"2023-12-31T00:00:00Z\",\r\n    \"duration\": \"18984.0\",\r\n    \"durationUnit\": \"HOURS\",\r\n    \"color\": \"#FF0000\",\r\n    \"externalId\": \"externalTest\",\r\n    \"status\": \"PLANNED\"\r\n  }\r\n]",
+            "responseTime": "56ms"
+          }
+        ]
+      }
+    ]
+  }
+  
