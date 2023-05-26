@@ -1,17 +1,18 @@
 <?php
+require_once 'Validator.php';
 
 class ConstructionStages
 {
-	private $db;
+    private $db;
 
-	public function __construct()
-	{
-		$this->db = Api::getDb();
-	}
+    public function __construct()
+    {
+        $this->db = Api::getDb();
+    }
 
-	public function getAll()
-	{
-		$stmt = $this->db->prepare("
+    public function getAll()
+    {
+        $stmt = $this->db->prepare("
 			SELECT
 				ID as id,
 				name, 
@@ -24,13 +25,13 @@ class ConstructionStages
 				status
 			FROM construction_stages
 		");
-		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
-	}
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-	public function getSingle($id)
-	{
-		$stmt = $this->db->prepare("
+    public function getSingle($id)
+    {
+        $stmt = $this->db->prepare("
 			SELECT
 				ID as id,
 				name, 
@@ -44,29 +45,102 @@ class ConstructionStages
 			FROM construction_stages
 			WHERE ID = :id
 		");
-		$stmt->execute(['id' => $id]);
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
-	}
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-	public function post(ConstructionStagesCreate $data)
-	{
-		$stmt = $this->db->prepare("
-			INSERT INTO construction_stages
-			    (name, start_date, end_date, duration, durationUnit, color, externalId, status)
-			    VALUES (:name, :start_date, :end_date, :duration, :durationUnit, :color, :externalId, :status)
-			");
-		$stmt->execute([
-			'name' => $data->name,
-			'start_date' => $data->startDate,
-			'end_date' => $data->endDate,
-			'duration' => $data->duration,
-			'durationUnit' => $data->durationUnit,
-			'color' => $data->color,
-			'externalId' => $data->externalId,
-			'status' => $data->status,
-		]);
-		return $this->getSingle($this->db->lastInsertId());
-	}
+    /**
+     * Create a new construction stage.
+     *
+     * @param ConstructionStagesCreate $data Data for the construction stage
+     *
+     * @return mixed The created construction stage or an error message
+     */
+    public function post(ConstructionStagesCreate $data)
+    {
+        try {
+            Validator::validateName($data->name);
+            Validator::validateStartDate($data->startDate);
+            Validator::validateEndDate($data->endDate, $data->startDate);
+            Validator::validateDurationUnit($data->durationUnit = $data->durationUnit ?: 'DAYS');//Default value 'DAYS'
+            Validator::validateColor($data->color = $data->color ?: null);//Default value null
+            Validator::validateExternalId($data->externalId = $data->externalId ?: null);//Default value null
+            Validator::validateStatus($data->status = $data->status ?: 'NEW');//Default value 'NEW'
+
+            if (isset($data->startDate, $data->endDate)) {
+                $startDate = $data->startDate;
+                $endDate = $data->endDate;
+                $durationUnit = $data->durationUnit;
+
+                // Calculate duration based on start_date, end_date, and durationUnit
+                $duration = self::calculateDuration($startDate, $endDate, $durationUnit);
+
+                // Set the calculated duration
+                $data->duration = $duration;
+            } elseif (!isset($data->endDate)) {
+                // If endDate is not provided, set duration and endDate to null
+                $data->duration = null;
+                $data->endDate = null;
+            }
+
+            // If the operation is successful, perform the database insertion
+            $stmt = $this->db->prepare("
+            INSERT INTO construction_stages
+                (name, start_date, end_date, duration, durationUnit, color, externalId, status)
+                VALUES (:name, :start_date, :end_date, :duration, :durationUnit, :color, :externalId, :status)
+        ");
+            $stmt->execute([
+                'name' => $data->name,
+                'start_date' => $data->startDate,
+                'end_date' => $data->endDate,
+                'duration' => $data->duration,
+                'durationUnit' => $data->durationUnit,
+                'color' => $data->color,
+                'externalId' => $data->externalId,
+                'status' => $data->status,
+            ]);
+
+            return $this->getSingle($this->db->lastInsertId());
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Calculates the duration between two dates based on the specified duration unit.
+     *
+     * @param string $startDate     Start date
+     * @param string $endDate       End date
+     * @param string $durationUnit  Duration unit (HOURS, DAYS, WEEKS, etc.)
+     *
+     * @return float|null The calculated duration or null if endDate is empty
+     */
+    public static function calculateDuration($startDate, $endDate, $durationUnit)
+    {
+        if (empty($endDate)) {
+            return null; // Return null for empty endDate
+        }
+        $startDateTime = new DateTime($startDate);
+        $endDateTime = new DateTime($endDate);
+        $interval = $endDateTime->diff($startDateTime);
+
+        switch ($durationUnit) {
+            case 'HOURS':
+                $duration = ceil($interval->h + ($interval->days * 24)); // Calculate hours as days
+                break;
+            case 'DAYS':
+                $duration = $interval->days;
+                break;
+            case 'WEEKS':
+                $duration = $interval->days / 7;
+                break;
+            default:
+                $duration = $interval->days;
+                break;
+        }
+
+        return $duration;
+    }
 
     /**
      * Update a construction stage by ID.
@@ -86,12 +160,7 @@ class ConstructionStages
         if (empty($existingData)) {
             return ['error' => 'Construction stage not found.'];
         }
-        
-        // Validate the status and name fields
-        if (isset($data->status, $data->name) && (empty($data->status) || empty($data->name))) {
-            return ['error' => 'Status and Name fields are required.'];
-        }
-        
+
 
         $fieldsToUpdate = array_filter(get_object_vars($data));
         $validFields = ['name', 'startDate', 'endDate', 'duration', 'durationUnit', 'color', 'externalId', 'status'];
@@ -156,28 +225,15 @@ class ConstructionStages
     private function update($id, $data)
     {
         $stmt = $this->db->prepare("
-            UPDATE construction_stages
-            SET name = :name,
-                start_date = :start_date,
-                end_date = :end_date,
-                duration = :duration,
-                durationUnit = :durationUnit,
-                color = :color,
-                externalId = :externalId,
-                status = :status
-            WHERE ID = :id
+        UPDATE construction_stages
+        SET name = :name,
+            status = :status
+        WHERE ID = :id
         ");
         $stmt->execute([
             'id' => $id,
             'name' => $data['name'],
-            'start_date' => $data['startDate'],
-            'end_date' => $data['endDate'],
-            'duration' => $data['duration'],
-            'durationUnit' => $data['durationUnit'],
-            'color' => $data['color'],
-            'externalId' => $data['externalId'],
             'status' => $data['status'],
         ]);
     }
-
 }

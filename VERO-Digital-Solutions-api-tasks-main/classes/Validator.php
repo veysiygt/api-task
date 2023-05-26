@@ -5,7 +5,6 @@
  *
  * This class is used to perform data validation operations.
  *
- * @package VERO-Digital-Solutions-api-tasks-main/classes
  */
 
 class Validator
@@ -32,6 +31,9 @@ class Validator
      */
     public static function validateStartDate($startDate)
     {
+        if (empty($startDate)) {
+        throw new Exception('Start date is required.');
+    }
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, $startDate);
         if (!$dateTime) {
             throw new Exception('Invalid start date format. Use ISO8601 format (e.g., 2022-12-31T14:59:00Z).');
@@ -50,11 +52,13 @@ class Validator
         if ($endDate !== null) {
             $startDateTime = new DateTime($startDate);
             $endDateTime = new DateTime($endDate);
+
             if (!$endDateTime || $endDateTime <= $startDateTime) {
-                throw new Exception('Invalid end date. It should be a valid ISO8601 format and later than the start date.');
+                throw new Exception('Invalid end date. It should be either null or a valid datetime that is later than the start date.');
             }
         }
     }
+
 
     /**
      * Validates the duration unit value.
@@ -78,6 +82,10 @@ class Validator
      */
     public static function validateColor($color)
     {
+        if ($color === '') {
+            // Boş renk değeri geçerlidir, hata fırlatma
+            return;
+        }
         if ($color !== null && !preg_match('/^#([A-Fa-f0-9]{6})$/', $color)) {
             throw new Exception('Invalid color format. Use valid HEX color format (e.g., #FF0000) or set it as null.');
         }
@@ -91,6 +99,10 @@ class Validator
      */
     public static function validateExternalId($externalId)
     {
+        if ($externalId !== null && !is_string($externalId)) {
+            throw new Exception('External ID must be a string or null.');
+        }
+    
         if ($externalId !== null && strlen($externalId) > 255) {
             throw new Exception('External ID cannot exceed 255 characters.');
         }
